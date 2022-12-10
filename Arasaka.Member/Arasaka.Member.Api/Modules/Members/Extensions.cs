@@ -1,11 +1,12 @@
-﻿using Arasaka.Member.Api.Repositories;
-using Arasaka.Member.Api.ViewModels;
+﻿using Arasaka.Member.Api.Modules.Members.Models;
+using Arasaka.Member.Api.Modules.Members.ViewModels;
+using static Arasaka.Member.Api.Utities.CommonExtension;
 
-namespace Arasaka.Member.Api;
+namespace Arasaka.Member.Api.Modules.Members;
 
-internal static class Extensions
+public static class Extensions
 {
-    internal static MemberEntity ConvertToEntity(this RegisterMemberViewModel registerMemberViewModel)
+    internal static MemberEntity ConvertToEntity(this SignUpMemberViewModel registerMemberViewModel)
     {
         return new MemberEntity
         {
@@ -15,7 +16,7 @@ internal static class Extensions
             Gender = registerMemberViewModel.Gender,
             Name = registerMemberViewModel.Name,
             PhoneNumber = registerMemberViewModel.PhoneNumber,
-            RegisterFrom = registerMemberViewModel.RegisterFrom,
+            RegisterFrom = registerMemberViewModel.SignUpFrom,
         };
     }
 
@@ -46,15 +47,5 @@ internal static class Extensions
             State = memberEntity.State,
             LastUpdateTime = memberEntity.LastUpdateTime,
         };
-    }
-
-    public static T RandomEnum<T>(Random? random = null) where T : struct, IConvertible
-    {
-        if (!typeof(T).IsEnum) { throw new Exception("random enum variable is not an enum"); }
-
-        random = random ?? new Random();
-
-        var values = Enum.GetValues(typeof(T));
-        return (T)values.GetValue(random.Next(values.Length));
     }
 }

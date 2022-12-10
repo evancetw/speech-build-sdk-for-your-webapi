@@ -1,4 +1,4 @@
-using Arasaka.Member.Api.Modules;
+using Arasaka.Member.Api.Modules.Members;
 using Arasaka.Member.Api.Repositories;
 using Arasaka.Member.Api.Utities.JsonConverters;
 using Microsoft.AspNetCore.Http.Json;
@@ -53,9 +53,10 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configure modules
-await app.ConfigureMembersModuleAsync();
-app.MapMembersModuleEndpoints();  // Map endpoints
+await app.ConfigureMembersCRUDModuleAsync();
+app.MapMembersCRUDModuleEndpoints();  // Map endpoints
 
+app.MapMembersModuleEndpoints();
 
 
 app.Run();

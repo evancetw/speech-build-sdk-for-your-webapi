@@ -1,26 +1,27 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace Arasaka.Member.Api.Modules.Members.Models;
 
-namespace Arasaka.Member.Api.ViewModels;
-
-public class RegisterMemberViewModel
+public class MemberEntity
 {
+    public long Id { get; set; }
+
     #region 個人隱私資料
 
-    [Required]
     public DateOnly Birthday { get; set; }
-    [Required]
     public string Gender { get; set; }
-    [Required]
     public string Name { get; set; }
-    [Required]
     public string Address { get; set; }
-    [Required]
     public string PhoneNumber { get; set; }
-    [Required]
     public string Email { get; set; }
 
     #endregion
 
-    [Required]
+    #region 無法辨識個人身分的系統資料
+
+    public string State { get; set; }
+    public DateTimeOffset RegisterTime { get; set; }
     public string RegisterFrom { get; set; }
+    public DateTimeOffset LastUpdateTime { get; set; }
+
+    #endregion
 }
+

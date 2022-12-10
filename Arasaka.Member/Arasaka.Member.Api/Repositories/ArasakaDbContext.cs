@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Arasaka.Member.Api.Modules.Members.Models;
 
 namespace Arasaka.Member.Api.Repositories;
 

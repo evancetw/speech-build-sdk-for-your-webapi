@@ -1,4 +1,4 @@
-﻿namespace Arasaka.Member.Api.ViewModels;
+﻿namespace Arasaka.Member.Api.Modules.Members.ViewModels;
 
 public class MemberViewModel
 {

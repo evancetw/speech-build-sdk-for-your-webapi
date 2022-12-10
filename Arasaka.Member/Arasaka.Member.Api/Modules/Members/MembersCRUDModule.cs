@@ -1,19 +1,20 @@
-﻿using Arasaka.Member.Api.Repositories;
-using Arasaka.Member.Api.ViewModels;
+﻿using Arasaka.Member.Api.Modules.Members.Models;
+using Arasaka.Member.Api.Modules.Members.ViewModels;
+using Arasaka.Member.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
-using static Arasaka.Member.Api.Constants;
-using static Arasaka.Member.Api.Extensions;
+using static Arasaka.Member.Api.Modules.Members.Constants;
+using static Arasaka.Member.Api.Utities.CommonExtension;
 
-namespace Arasaka.Member.Api.Modules;
+namespace Arasaka.Member.Api.Modules.Members;
 
-public static class MembersModule
+public static class MembersCRUDModule
 {
-    public static IServiceCollection RegisterMembersModule(this IServiceCollection services)
+    public static IServiceCollection RegisterMembersCRUDModule(this IServiceCollection services)
     {
         return services;
     }
 
-    public static async Task ConfigureMembersModuleAsync(this WebApplication app)
+    public static async Task ConfigureMembersCRUDModuleAsync(this WebApplication app)
     {
         using (var scope = app.Services.CreateScope())
         {
@@ -60,16 +61,16 @@ public static class MembersModule
         }
     }
 
-    public static IEndpointRouteBuilder MapMembersModuleEndpoints(this IEndpointRouteBuilder endpoints)
+    public static IEndpointRouteBuilder MapMembersCRUDModuleEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/members", async (ArasakaDbContext db) =>
         {
             return (await db.Members.ToListAsync()).Select(x => x.ConvertToViewModel());
         });
 
-        endpoints.MapPost("/members", async (ArasakaDbContext db, RegisterMemberViewModel registerMemberViewModel) =>
+        endpoints.MapPost("/members", async (ArasakaDbContext db, SignUpMemberViewModel signupMemberViewModel) =>
         {
-            var memberEntity = registerMemberViewModel.ConvertToEntity();
+            var memberEntity = signupMemberViewModel.ConvertToEntity();
             memberEntity.RegisterTime = DateTimeOffset.UtcNow;
             memberEntity.State = MemberState.Unverified.ToString();
             memberEntity.LastUpdateTime = memberEntity.RegisterTime;
