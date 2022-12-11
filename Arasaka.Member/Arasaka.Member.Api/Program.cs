@@ -35,16 +35,16 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Auto apply migrations
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ArasakaDbContext>();
-    await db.Database.MigrateAsync();
-}
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Auto apply migrations
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ArasakaDbContext>();
+        await db.Database.MigrateAsync();
+    }
+
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {

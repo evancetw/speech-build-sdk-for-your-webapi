@@ -6,6 +6,10 @@ namespace Arasaka.Member.Api.Modules.Members;
 
 public static class MembersModule
 {
+    /// <summary>
+    /// key: current state & command
+    /// value: next state
+    /// </summary>
     public static Dictionary<(MemberState, MemberCommand), MemberState> StateDiagram = new Dictionary<(MemberState, MemberCommand), MemberState>()
     {
         [(MemberState.FSM_BEGIN, MemberCommand.SignUp)] = MemberState.Unverified,
@@ -25,7 +29,7 @@ public static class MembersModule
         [(MemberState.Banned, MemberCommand.Remove)] = MemberState.FSM_END,
     };
 
-    public static (bool CanChange, MemberState? NextState) TryChangeState(MemberState currentState, MemberCommand command)
+    public static (bool CanTransfer, MemberState? NextState) TryGetTransferResult(MemberState currentState, MemberCommand command)
     {
         if (StateDiagram.TryGetValue((currentState, command), out var nextState))
         {
@@ -52,11 +56,11 @@ public static class MembersModule
             return Results.NotFound();
 
         var currentState = Enum.Parse<MemberState>(memberEntity.State);
-        var changeStateResult = TryChangeState(currentState, command);
+        var transferStateResult = TryGetTransferResult(currentState, command);
 
-        if (changeStateResult.CanChange)
+        if (transferStateResult.CanTransfer)
         {
-            memberEntity.State = changeStateResult.NextState.Value.ToString();
+            memberEntity.State = transferStateResult.NextState.Value.ToString();
             memberEntity.LastUpdateTime = DateTimeOffset.UtcNow;
             await db.SaveChangesAsync();
 

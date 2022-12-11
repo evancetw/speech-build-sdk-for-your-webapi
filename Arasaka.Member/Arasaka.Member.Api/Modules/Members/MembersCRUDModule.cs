@@ -16,6 +16,9 @@ public static class MembersCRUDModule
 
     public static async Task ConfigureMembersCRUDModuleAsync(this WebApplication app)
     {
+        if (app.Environment.IsDevelopment() == false)
+            return;
+
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<ArasakaDbContext>();
