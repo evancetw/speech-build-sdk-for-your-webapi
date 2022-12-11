@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Contracts\" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\P\github-evancetw\speech-build-sdk-for-your-webapi\Arasaka.Member\Arasaka.Member.ClientSDK\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\P\github-evancetw\speech-build-sdk-for-your-webapi\Arasaka.Member\Arasaka.Member.ClientSDK\.editorconfig" />
+  </ItemGroup>
+
+</Project>
