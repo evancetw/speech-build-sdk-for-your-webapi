@@ -5,6 +5,16 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arasaka.Member.Api", "Arasaka.Member.Api\Arasaka.Member.Api.csproj", "{1D9E66A8-28C7-4BD5-8B11-3A1CAD3F23B9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "server-side", "server-side", "{E666DF24-EC82-4864-9D2B-C37C49821E0B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client-side", "client-side", "{B8E03BC4-31B0-412A-8582-9D7A15BF9AC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arasaka.Member.ClientSDK", "Arasaka.Member.ClientSDK\Arasaka.Member.ClientSDK.csproj", "{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNSwag", "TestNSwag\TestNSwag.csproj", "{A97483A5-A2CE-4787-8016-2DE9BD426C65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arasaka.Member.ClientApp", "Arasaka.Member.ClientApp\Arasaka.Member.ClientApp.csproj", "{03E1BF9E-9E61-476E-9949-4B35C7621823}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +25,27 @@ Global
 		{1D9E66A8-28C7-4BD5-8B11-3A1CAD3F23B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D9E66A8-28C7-4BD5-8B11-3A1CAD3F23B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D9E66A8-28C7-4BD5-8B11-3A1CAD3F23B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A97483A5-A2CE-4787-8016-2DE9BD426C65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A97483A5-A2CE-4787-8016-2DE9BD426C65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A97483A5-A2CE-4787-8016-2DE9BD426C65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A97483A5-A2CE-4787-8016-2DE9BD426C65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03E1BF9E-9E61-476E-9949-4B35C7621823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03E1BF9E-9E61-476E-9949-4B35C7621823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03E1BF9E-9E61-476E-9949-4B35C7621823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03E1BF9E-9E61-476E-9949-4B35C7621823}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D9E66A8-28C7-4BD5-8B11-3A1CAD3F23B9} = {E666DF24-EC82-4864-9D2B-C37C49821E0B}
+		{43820BDC-6CB6-46CA-AC9C-43C0B4EDAC61} = {B8E03BC4-31B0-412A-8582-9D7A15BF9AC7}
+		{A97483A5-A2CE-4787-8016-2DE9BD426C65} = {B8E03BC4-31B0-412A-8582-9D7A15BF9AC7}
+		{03E1BF9E-9E61-476E-9949-4B35C7621823} = {B8E03BC4-31B0-412A-8582-9D7A15BF9AC7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D5C33E7-A959-4E57-8646-8293FDEA8896}
