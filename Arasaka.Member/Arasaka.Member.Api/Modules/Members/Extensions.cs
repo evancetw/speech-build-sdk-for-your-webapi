@@ -1,6 +1,6 @@
 ﻿using Arasaka.Member.Api.Modules.Members.Models;
 using Arasaka.Member.Api.Modules.Members.ViewModels;
-using static Arasaka.Member.Api.Utities.CommonExtension;
+using static Arasaka.Member.Api.Modules.Members.Constants;
 
 namespace Arasaka.Member.Api.Modules.Members;
 
@@ -11,9 +11,9 @@ public static class Extensions
         return new MemberEntity
         {
             Address = registerMemberViewModel.Address,
-            Birthday = registerMemberViewModel.Birthday,
+            Birthday = DateOnly.FromDateTime(registerMemberViewModel.Birthday.UtcDateTime),
             Email = registerMemberViewModel.Email,
-            Gender = registerMemberViewModel.Gender,
+            Gender = registerMemberViewModel.Gender.ToString(),
             Name = registerMemberViewModel.Name,
             PhoneNumber = registerMemberViewModel.PhoneNumber,
             RegisterFrom = registerMemberViewModel.SignUpFrom,
@@ -24,7 +24,7 @@ public static class Extensions
     {
         updatingMemberEntity.Address = updateMemberViewModel.Address ?? updatingMemberEntity.Address;
         updatingMemberEntity.Email = updateMemberViewModel.Email ?? updatingMemberEntity.Email;
-        updatingMemberEntity.Gender = updateMemberViewModel.Gender ?? updatingMemberEntity.Gender;
+        updatingMemberEntity.Gender = updateMemberViewModel.Gender.HasValue ? updateMemberViewModel.Gender.Value.ToString() : updatingMemberEntity.Gender;
         updatingMemberEntity.Name = updateMemberViewModel.Name ?? updatingMemberEntity.Name;
         updatingMemberEntity.PhoneNumber = updateMemberViewModel.PhoneNumber ?? updatingMemberEntity.PhoneNumber;
     }
@@ -36,9 +36,9 @@ public static class Extensions
             Id = memberEntity.Id,
 
             Address = memberEntity.Address,
-            Birthday = memberEntity.Birthday,
+            Birthday = memberEntity.Birthday.ToDateTime(new TimeOnly(0, 0), DateTimeKind.Utc),
             Email = memberEntity.Email,
-            Gender = memberEntity.Gender,
+            Gender = Enum.Parse<Gender>(memberEntity.Gender),
             Name = memberEntity.Name,
             PhoneNumber = memberEntity.PhoneNumber,
 

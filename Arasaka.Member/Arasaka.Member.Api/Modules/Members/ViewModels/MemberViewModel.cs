@@ -1,4 +1,6 @@
-﻿namespace Arasaka.Member.Api.Modules.Members.ViewModels;
+﻿using static Arasaka.Member.Api.Modules.Members.Constants;
+
+namespace Arasaka.Member.Api.Modules.Members.ViewModels;
 
 public class MemberViewModel
 {
@@ -6,8 +8,8 @@ public class MemberViewModel
 
     #region 個人隱私資料
 
-    public DateOnly Birthday { get; set; }
-    public string Gender { get; set; }
+    public DateTimeOffset Birthday { get; set; }
+    public Gender Gender { get; set; }
     public string Name { get; set; }
     public string Address { get; set; }
     public string PhoneNumber { get; set; }

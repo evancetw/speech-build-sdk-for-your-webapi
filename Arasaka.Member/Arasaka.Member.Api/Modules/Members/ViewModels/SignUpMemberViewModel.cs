@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using static Arasaka.Member.Api.Modules.Members.Constants;
 
 namespace Arasaka.Member.Api.Modules.Members.ViewModels;
 
@@ -6,10 +7,13 @@ public class SignUpMemberViewModel
 {
     #region 個人隱私資料
 
+    /// <summary>
+    /// yyyy/MM/dd
+    /// </summary>
     [Required]
-    public DateOnly Birthday { get; set; }
+    public DateTimeOffset Birthday { get; set; }
     [Required]
-    public string Gender { get; set; }
+    public Gender Gender { get; set; }
     [Required]
     public string Name { get; set; }
     [Required]
