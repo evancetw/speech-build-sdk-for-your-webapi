@@ -1,5 +1,7 @@
 ﻿using Arasaka.Member.Api.Modules.Members.ViewModels;
 using Arasaka.Member.Api.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using static Arasaka.Member.Api.Modules.Members.Constants;
 
 namespace Arasaka.Member.Api.Modules.Members;
@@ -121,6 +123,53 @@ public static class MembersModule
 
             return Results.NoContent();
         });
+
+        //endpoints.MapGet("/members:list", async ([FromQuery] PaginationParameters pagination, ArasakaDbContext db, HttpContext http, CancellationToken token) =>
+        //{
+        //    var queryResult = await db.Members.Skip((pagination.PageNumber - 1) * pagination.PageSize).Take(pagination.PageSize).ToListAsync();
+
+        //    //foreach (var item in queryResult)
+        //    //{
+        //    //    yield return item.ConvertToViewModel();
+        //    //}
+
+        //    return queryResult.Select(x => x.ConvertToViewModel());
+
+
+
+        //    //var originMemberEntity = await db.Members.FindAsync(id);
+        //    //if (originMemberEntity is null)
+        //    //    return Results.NoContent();
+
+        //    //db.Members.Remove(originMemberEntity);
+        //    //await db.SaveChangesAsync();
+
+        //    //return Results.NoContent();
+        //});
+
+        endpoints.MapGet("/members:list", async ([FromQuery] int pageSize, [FromQuery] int pageNumber, ArasakaDbContext db, HttpContext http, CancellationToken token) =>
+        {
+            var queryResult = await db.Members.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            //foreach (var item in queryResult)
+            //{
+            //    yield return item.ConvertToViewModel();
+            //}
+
+            return queryResult.Select(x => x.ConvertToViewModel());
+
+
+
+            //var originMemberEntity = await db.Members.FindAsync(id);
+            //if (originMemberEntity is null)
+            //    return Results.NoContent();
+
+            //db.Members.Remove(originMemberEntity);
+            //await db.SaveChangesAsync();
+
+            //return Results.NoContent();
+        });
+
 
         return endpoints;
     }

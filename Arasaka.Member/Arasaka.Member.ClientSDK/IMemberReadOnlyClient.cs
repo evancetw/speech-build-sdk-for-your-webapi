@@ -9,6 +9,9 @@ namespace Arasaka.Member.ClientSDK
     {
         Task<MemberInformation> GetAsync(long memberId, CancellationToken cancellationToken);
 
-        Task<IEnumerable<MemberInformation>> ListAsync(long memberId, CancellationToken cancellationToken);
+        Task<IEnumerable<MemberInformation>> ListAsync(ListMembersFilter listMembersFilter, CancellationToken cancellationToken);
+
+
+
     }
 }

@@ -142,11 +142,6 @@ namespace Arasaka.Member.ClientSDK
             }
         }
 
-        public Task<IEnumerable<MemberInformation>> ListAsync(long memberId, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task PermitAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
@@ -233,6 +228,30 @@ namespace Arasaka.Member.ClientSDK
                     return Task.CompletedTask;
                 },
                 cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<MemberInformation>> ListAsync(ListMembersFilter listMembersFilter, CancellationToken cancellationToken)
+        {
+            var urlBuilder = new StringBuilder();
+            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members:list?pageSize={listMembersFilter.PageSize}&pageNumber={listMembersFilter.PageNumber}");
+
+            IEnumerable<MemberInformation> memberInformations = null;
+
+            await this.SendAsync(
+                HttpMethod.Get, urlBuilder.ToString(),
+                handleResponse: async (response) =>
+                {
+                    response.EnsureSuccessStatusCode();
+
+                    memberInformations = await JsonSerializerHelper.DeserializeAsync<IEnumerable<MemberInformation>>(
+                        await response.Content.ReadAsStreamAsync().ConfigureAwait(false)).ConfigureAwait(false);
+                },
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+
+            if (memberInformations == null)
+                throw new Exception();
+
+            return memberInformations;
         }
     }
 }
