@@ -85,32 +85,40 @@ public static class MembersModule
             await db.SaveChangesAsync();
 
             return Results.Created($"/members/{memberEntity.Id}", memberEntity.ConvertToViewModel());
-        });
+        })
+        //.WithDisplayName("Signup")  // 只設定 WithDisplayName 會 generate 出有問題的 client source code，因為並不是 open api operation id
+        //.WithOpenApi(operation => new(operation) { OperationId = "Signup" })  // 與 .WithName("Signup") 等義
+        .WithName("Signup");
 
         endpoints.MapPost("/members/{id}:verify", async (ArasakaDbContext db, long id) =>
         {
             return await HandleMemberCommadAsync(db, id, MemberCommand.Verify);
-        });
+        })
+        .WithName("Verify");
 
         endpoints.MapPost("/members/{id}:restrict", async (ArasakaDbContext db, long id) =>
         {
             return await HandleMemberCommadAsync(db, id, MemberCommand.Restrict);
-        });
+        })
+        .WithName("Restrict");
 
         endpoints.MapPost("/members/{id}:allow", async (ArasakaDbContext db, long id) =>
         {
             return await HandleMemberCommadAsync(db, id, MemberCommand.Allow);
-        });
+        })
+        .WithName("Allow");
 
         endpoints.MapPost("/members/{id}:ban", async (ArasakaDbContext db, long id) =>
         {
             return await HandleMemberCommadAsync(db, id, MemberCommand.Ban);
-        });
+        })
+        .WithName("Ban");
 
         endpoints.MapPost("/members/{id}:permit", async (ArasakaDbContext db, long id) =>
         {
             return await HandleMemberCommadAsync(db, id, MemberCommand.Permit);
-        });
+        })
+        .WithName("Permit");
 
         endpoints.MapDelete("/members/{id}:remove", async (ArasakaDbContext db, long id) =>
         {
@@ -122,7 +130,8 @@ public static class MembersModule
             await db.SaveChangesAsync();
 
             return Results.NoContent();
-        });
+        })
+        .WithName("Remove");
 
         //endpoints.MapGet("/members:list", async ([FromQuery] PaginationParameters pagination, ArasakaDbContext db, HttpContext http, CancellationToken token) =>
         //{
@@ -168,7 +177,8 @@ public static class MembersModule
             //await db.SaveChangesAsync();
 
             //return Results.NoContent();
-        });
+        })
+        .WithName("List");
 
 
         return endpoints;
