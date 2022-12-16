@@ -3,6 +3,13 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Arasaka.Member.Client
 {
@@ -12,9 +19,27 @@ namespace Arasaka.Member.Client
         private HttpClient _httpClient;
         private Lazy<JsonSerializerOptions> _jsonSerializerOptions;
 
+        private static readonly Version _version = new Version(
+            Assembly.GetAssembly(typeof(MemberClient)).GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+
+        private Version GetApiVersion()
+        {
+            var urlBuilder = new StringBuilder();
+            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version");
+
+            var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
+            var version = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            return new Version(version);
+        }
+
+        public Version Version => _version;
+
+        public Version ApiVersion { get; private set; }
+
         public MemberClient(string baseUrl, HttpClient httpClient)
         {
-            BaseUrl = baseUrl;
+            _baseUrl = baseUrl;
             _httpClient = httpClient;
             _jsonSerializerOptions = new Lazy<JsonSerializerOptions>(() =>
             {
@@ -31,6 +56,14 @@ namespace Arasaka.Member.Client
 
                 return settings;
             });
+
+            ApiVersion = GetApiVersion();
+
+            Console.WriteLine($@"{new String('#', 60)}
+  Client SDK Version: {Version}
+  API Version       : {ApiVersion}");
+
+            Console.WriteLine();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>

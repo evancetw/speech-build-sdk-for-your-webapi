@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +18,32 @@ namespace Arasaka.Member.ClientSDK
         private string _baseUrl = "";
         private HttpClient _httpClient;
 
+        private static readonly Version _version = new Version(
+            Assembly.GetAssembly(typeof(MemberClient)).GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+
+        private Version GetApiVersion()
+        {
+            var urlBuilder = new StringBuilder();
+            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version");
+
+            var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
+            var version = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            return new Version(version);
+        }
+
         public MemberClient(string baseUrl, HttpClient httpClient)
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
+
+            ApiVersion = GetApiVersion();
+
+            Console.WriteLine($@"{new String('#', 60)}
+  Client SDK Version: {Version}
+  API Version       : {ApiVersion}");
+
+            Console.WriteLine();
         }
 
         public string BaseUrl
@@ -28,6 +51,11 @@ namespace Arasaka.Member.ClientSDK
             get { return _baseUrl; }
             set { _baseUrl = value; }
         }
+
+        public Version Version => _version;
+
+        public Version ApiVersion { get; private set; }
+
 
         private async Task SendAsync(
             HttpMethod httpMethod,

@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <Version>0.3.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

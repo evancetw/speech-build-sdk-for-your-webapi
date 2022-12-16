@@ -1,3 +1,4 @@
+using Arasaka.Member.Api.Modules.ArasakaSystem;
 using Arasaka.Member.Api.Modules.Members;
 using Arasaka.Member.Api.Repositories;
 using Arasaka.Member.Api.Utities;
@@ -70,5 +71,6 @@ app.MapMembersCRUDModuleEndpoints();  // Map endpoints
 
 app.MapMembersModuleEndpoints();
 
+app.MapArasakaSystemModuleEndpoints();
 
 app.Run();
