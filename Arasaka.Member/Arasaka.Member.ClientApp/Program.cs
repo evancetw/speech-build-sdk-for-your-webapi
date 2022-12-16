@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Arasaka.Member.ClientSDK;
+using Microsoft.Extensions.Logging;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,9 +10,45 @@ Console.WriteLine("Hello, World!");
 Console.WriteLine();
 
 
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder
+        .AddFilter("Default", LogLevel.Debug)
+        .AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Warning)
+        .AddConsole();
+});
 
-var httpClient = new HttpClient();
-var memberClient = new MemberClient("http://localhost:5101/", httpClient);
+ILogger<MemberClient> logger = loggerFactory.CreateLogger<MemberClient>();
+
+MemberClient memberClient = null;
+
+try
+{
+    var httpClient = new HttpClient();
+    memberClient = new MemberClient("http://localhost:5101/", httpClient, logger);
+
+    // 故意打個錯的網址
+    var rsp = await httpClient.GetAsync("http://njrjkwodsifhqwerhhh.com");
+    rsp.EnsureSuccessStatusCode();
+
+}
+catch (Arasaka.Member.ClientSDK.Exceptions.MemberApiClientException ex)
+{
+    Console.WriteLine($"SDK 自定義的 exception");
+    Console.WriteLine($"SDK 自定義的 exception type: {ex.GetType().Name}");
+    Console.WriteLine($"SDK 自定義的 exception message: {ex.Message}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"未處理的 exception");
+    Console.WriteLine($"未處理的 exception type: {ex.GetType().Name}");
+    Console.WriteLine($"未處理的 exception message: {ex.Message}");
+}
+
+Console.ReadLine();
+return;
+
 
 
 await Demo(@"get exist member",

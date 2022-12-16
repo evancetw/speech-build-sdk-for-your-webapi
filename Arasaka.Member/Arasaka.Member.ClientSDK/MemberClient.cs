@@ -7,43 +7,72 @@ using System.Threading;
 using System.Threading.Tasks;
 using Arasaka.Member.ClientSDK.Models;
 using Arasaka.Member.ClientSDK.Utities;
+using Microsoft.Extensions.Logging;
 
 namespace Arasaka.Member.ClientSDK
 {
     /// <summary>
     /// Member API 客戶端
     /// </summary>
-    public class MemberClient : IMemberClient
+    public class MemberClient
     {
         private string _baseUrl = "";
         private HttpClient _httpClient;
-
+        private readonly ILogger<MemberClient> _logger;
         private static readonly Version _version = new Version(
             Assembly.GetAssembly(typeof(MemberClient)).GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
 
+        //private Version GetApiVersion()
+        //{
+        //    var urlBuilder = new StringBuilder();
+        //    urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version-wrong-url");
+
+        //    var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
+        //    response.EnsureSuccessStatusCode();
+
+        //    var version = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+        //    return new Version(version);
+        //}
+
+
+
+
         private Version GetApiVersion()
         {
-            var urlBuilder = new StringBuilder();
-            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version");
+            try
+            {
+                var urlBuilder = new StringBuilder();
+                urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version-wrong-url");
 
-            var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
-            var version = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
+                response.EnsureSuccessStatusCode();
 
-            return new Version(version);
+                var version = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                return new Version(version);
+            }
+            catch (Exception ex)
+            {
+                var customException = new Arasaka.Member.ClientSDK.Exceptions.MemberApiClientException(
+                    message: "Get API version failed", 500, "response", null, ex);
+
+                throw customException;
+            }
         }
 
-        public MemberClient(string baseUrl, HttpClient httpClient)
+        public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger)
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
+            _logger = logger;
 
             ApiVersion = GetApiVersion();
 
-            Console.WriteLine($@"{new String('#', 60)}
+            _logger.LogInformation($@"{new String('#', 60)}
   Client SDK Version: {Version}
   API Version       : {ApiVersion}");
 
-            Console.WriteLine();
         }
 
         public string BaseUrl
