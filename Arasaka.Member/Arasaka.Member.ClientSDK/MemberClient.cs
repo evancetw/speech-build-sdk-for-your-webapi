@@ -43,7 +43,7 @@ namespace Arasaka.Member.ClientSDK
             try
             {
                 var urlBuilder = new StringBuilder();
-                urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version-wrong-url");
+                urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/_system/version");
 
                 var response = _httpClient.GetAsync(urlBuilder.ToString()).GetAwaiter().GetResult();
                 response.EnsureSuccessStatusCode();
@@ -61,18 +61,18 @@ namespace Arasaka.Member.ClientSDK
             }
         }
 
-        public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger)
+        public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger, MemberClientOptions clientOptions = null)
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
             _logger = logger;
+            ClientOptions = clientOptions ?? new MemberClientOptions() { RequestRetryCount = 6 };
 
             ApiVersion = GetApiVersion();
 
             _logger.LogInformation($@"{new String('#', 60)}
   Client SDK Version: {Version}
   API Version       : {ApiVersion}");
-
         }
 
         public string BaseUrl
@@ -85,6 +85,7 @@ namespace Arasaka.Member.ClientSDK
 
         public Version ApiVersion { get; private set; }
 
+        public MemberClientOptions ClientOptions { get; set; }
 
         private async Task SendAsync(
             HttpMethod httpMethod,
@@ -96,31 +97,52 @@ namespace Arasaka.Member.ClientSDK
             var ct = cancellationToken ?? CancellationToken.None;
 
             var client = _httpClient;
+
             try
             {
-                using (var request = new HttpRequestMessage())
+                int currentRetryCount = 0;
+                do
                 {
-                    request.Method = httpMethod;
-                    request.RequestUri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-                    if (generateJsonStringContent != null)
+                    using (var request = new HttpRequestMessage())
                     {
-                        request.Content = await generateJsonStringContent.Invoke().ConfigureAwait(false);
-                        request.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
-                    }
+                        request.Method = httpMethod;
+                        request.RequestUri = new Uri(url, UriKind.RelativeOrAbsolute);
 
-                    var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
-                    try
-                    {
-                        if (handleResponse != null)
-                            await handleResponse.Invoke(response).ConfigureAwait(false);
+                        if (generateJsonStringContent != null)
+                        {
+                            request.Content = await generateJsonStringContent.Invoke().ConfigureAwait(false);
+                            request.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                        }
+
+                        var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
+                        try
+                        {
+                            if (handleResponse != null)
+                                await handleResponse.Invoke(response).ConfigureAwait(false);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (currentRetryCount < ClientOptions.RequestRetryCount)
+                            {
+                                currentRetryCount++;
+
+                                _logger.LogWarning($"發送 request 失敗，開始嘗試第 {currentRetryCount} 次。");
+                            }
+                            else
+                            {
+                                _logger.LogError($"發送 request 失敗，重試次數達上限 {currentRetryCount}");
+
+                                throw;
+                            }
+                        }
+                        finally
+                        {
+                            if (response != null)
+                                response.Dispose();
+                        }
                     }
-                    finally
-                    {
-                        if (response != null)
-                            response.Dispose();
-                    }
-                }
+                } while (true);
             }
             finally
             {
@@ -247,7 +269,7 @@ namespace Arasaka.Member.ClientSDK
         public async Task<MemberInformation> SignUpAsync(MemberSignUpForm memberSignUpForm, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
-            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members:signup");
+            urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members:signup-wrong-url");
 
             MemberInformation memberInformation = null;
 

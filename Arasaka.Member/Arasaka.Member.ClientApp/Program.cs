@@ -26,29 +26,28 @@ MemberClient memberClient = null;
 try
 {
     var httpClient = new HttpClient();
-    memberClient = new MemberClient("http://localhost:5101/", httpClient, logger);
+    memberClient = new MemberClient("http://localhost:5101/", httpClient, logger, new MemberClientOptions() { RequestRetryCount = 2 });
 
-    // 故意打個錯的網址
-    var rsp = await httpClient.GetAsync("http://njrjkwodsifhqwerhhh.com");
-    rsp.EnsureSuccessStatusCode();
-
+    //// 故意打個錯的網址
+    //var rsp = await httpClient.GetAsync("http://njrjkwodsifhqwerhhh.com");
+    //rsp.EnsureSuccessStatusCode();
 }
 catch (Arasaka.Member.ClientSDK.Exceptions.MemberApiClientException ex)
 {
     Console.WriteLine($"SDK 自定義的 exception");
     Console.WriteLine($"SDK 自定義的 exception type: {ex.GetType().Name}");
     Console.WriteLine($"SDK 自定義的 exception message: {ex.Message}");
+
+    Console.ReadLine();
 }
 catch (Exception ex)
 {
     Console.WriteLine($"未處理的 exception");
     Console.WriteLine($"未處理的 exception type: {ex.GetType().Name}");
     Console.WriteLine($"未處理的 exception message: {ex.Message}");
+
+    Console.ReadLine();
 }
-
-Console.ReadLine();
-return;
-
 
 
 await Demo(@"get exist member",
