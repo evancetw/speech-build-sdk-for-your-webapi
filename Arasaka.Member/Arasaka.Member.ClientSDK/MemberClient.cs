@@ -14,7 +14,7 @@ namespace Arasaka.Member.ClientSDK
     /// <summary>
     /// Member API 客戶端
     /// </summary>
-    public class MemberClient
+    public class MemberClient : IMemberClient
     {
         private string _baseUrl = "";
         private HttpClient _httpClient;
@@ -61,31 +61,6 @@ namespace Arasaka.Member.ClientSDK
             }
         }
 
-        public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger, MemberClientOptions clientOptions = null)
-        {
-            _baseUrl = baseUrl;
-            _httpClient = httpClient;
-            _logger = logger;
-            ClientOptions = clientOptions ?? new MemberClientOptions() { RequestRetryCount = 6 };
-
-            ApiVersion = GetApiVersion();
-
-            _logger.LogInformation($@"{new String('#', 60)}
-  Client SDK Version: {Version}
-  API Version       : {ApiVersion}");
-        }
-
-        public string BaseUrl
-        {
-            get { return _baseUrl; }
-            set { _baseUrl = value; }
-        }
-
-        public Version Version => _version;
-
-        public Version ApiVersion { get; private set; }
-
-        public MemberClientOptions ClientOptions { get; set; }
 
         private async Task SendAsync(
             HttpMethod httpMethod,
@@ -149,7 +124,38 @@ namespace Arasaka.Member.ClientSDK
             }
         }
 
-        public async Task AllowAsync(long memberId, CancellationToken cancellationToken)
+        /// <summary>
+        /// for mocking
+        /// </summary>
+        protected MemberClient() { }
+
+        public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger, MemberClientOptions clientOptions = null)
+        {
+            _baseUrl = baseUrl;
+            _httpClient = httpClient;
+            _logger = logger;
+            ClientOptions = clientOptions ?? new MemberClientOptions() { RequestRetryCount = 6 };
+
+            ApiVersion = GetApiVersion();
+
+            _logger.LogInformation($@"{new String('#', 60)}
+  Client SDK Version: {Version}
+  API Version       : {ApiVersion}");
+        }
+
+        public virtual string BaseUrl
+        {
+            get { return _baseUrl; }
+            set { _baseUrl = value; }
+        }
+
+        public virtual Version Version { get; protected set; } = _version;
+
+        public virtual Version ApiVersion { get; set; }
+
+        public virtual MemberClientOptions ClientOptions { get; set; }
+
+        public virtual async Task AllowAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:allow");
@@ -164,7 +170,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task BanAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task BanAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:ban");
@@ -179,7 +185,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<MemberInformation> GetAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task<MemberInformation> GetAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}");
@@ -221,7 +227,7 @@ namespace Arasaka.Member.ClientSDK
             }
         }
 
-        public async Task PermitAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task PermitAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:permit");
@@ -236,7 +242,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task RemoveAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task RemoveAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:remove");
@@ -251,7 +257,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task RestrictAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task RestrictAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:restrict");
@@ -266,7 +272,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<MemberInformation> SignUpAsync(MemberSignUpForm memberSignUpForm, CancellationToken cancellationToken)
+        public virtual async Task<MemberInformation> SignUpAsync(MemberSignUpForm memberSignUpForm, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members:signup-wrong-url");
@@ -294,7 +300,7 @@ namespace Arasaka.Member.ClientSDK
             return memberInformation;
         }
 
-        public async Task VerifyAsync(long memberId, CancellationToken cancellationToken)
+        public virtual async Task VerifyAsync(long memberId, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members/{memberId}:verify");
@@ -309,7 +315,7 @@ namespace Arasaka.Member.ClientSDK
                 cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<MemberInformation>> ListAsync(ListMembersFilter listMembersFilter, CancellationToken cancellationToken)
+        public virtual async Task<IEnumerable<MemberInformation>> ListAsync(ListMembersFilter listMembersFilter, CancellationToken cancellationToken)
         {
             var urlBuilder = new StringBuilder();
             urlBuilder.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append($"/members:list?pageSize={listMembersFilter.PageSize}&pageNumber={listMembersFilter.PageNumber}");
