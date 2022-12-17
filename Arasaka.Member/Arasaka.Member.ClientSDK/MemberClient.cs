@@ -129,11 +129,15 @@ namespace Arasaka.Member.ClientSDK
         /// </summary>
         protected MemberClient() { }
 
+        public MemberClient(string baseUrl) : this(baseUrl, null, null, null)
+        {
+        }
+
         public MemberClient(string baseUrl, HttpClient httpClient, ILogger<MemberClient> logger, MemberClientOptions clientOptions = null)
         {
             _baseUrl = baseUrl;
-            _httpClient = httpClient;
-            _logger = logger;
+            _httpClient = httpClient ?? new HttpClient();
+            _logger = logger;  // 使用工廠產 logger
             ClientOptions = clientOptions ?? new MemberClientOptions() { RequestRetryCount = 6 };
 
             ApiVersion = GetApiVersion();

@@ -26,5 +26,16 @@ namespace Arasaka.Member.ClientSDK.Extensions
 
             return service;
         }
+
+        public static ServiceCollection AddMemberClient(this ServiceCollection service)
+        {
+            service.AddMemberClient(option =>
+            {
+                option.BaseUrl = "https://api.arasaka.corp/";
+                option.ClientOptions = new MemberClientOptions() { RequestRetryCount = 3 };
+            });
+
+            return service;
+        }
     }
 }
